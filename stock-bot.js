@@ -1,20 +1,19 @@
-/** stock-bot is an OG stock market script that has been expanded from it's original
- * It uses forecasts, profit potential and potential change math to figure out 
- * whether to sell stocks. It buys when stocks have a good forecast. And finally, it is 
- * short capable for those on BN.8 and have it unlocked.
- * 
- * 	Heavily modified by: Zharay
- * 	Originally written by: u/havoc_mayhem
- * 	Original URL: https://www.reddit.com/r/Bitburner/comments/9o1xle/stock_market_script/
- * 	Mod URL: https://github.com/Zharay/BitburnerBotnet
- * 
- * 	REQUIRES:
- * 		- WSE Account
- * 		- TIX API Access ($1b)
- * 		- 4S Market Data API ($5b)
- * 		- Market Data TIX API ($25b)
- * 		- (Optional) For shorts: Be on BitNode 8.1 or unlock after BitNode 8.2
-**/
+/**
+ * stock-bot.js - Automates stock trading with long/short strategies.
+ *
+ * Author: Zharay (Original Repository: https://github.com/Zharay/BitburnerBotnet)
+ *
+ * Usage:
+ * ```
+ * run stock-bot.js
+ * ```
+ *
+ * Requirements:
+ * - API: ns.stock.getSymbols, ns.stock.getPrice, ns.stock.sell, ns.stock.sellShort, ns.stock.buy, ns.stock.short, ns.stock.getPosition, ns.stock.getMaxShares, ns.stock.getVolatility, ns.stock.getForecast, ns.stock.getAskPrice, ns.stock.getBidPrice, ns.getServerMoneyAvailable, ns.nFormat, ns.getPortHandle, ns.getScriptRam, ns.sleep, ns.clearLog, ns.printf, ns.tprint
+ * - RAM: TODO (suggested: 4.0 GB)
+ *
+ * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/stock-bot.js
+ */
 
 const shortAvailable = true;		// Requires you to be on BN 8.1 or have beaten 8.2
 const fracL = 0.025;				// Fraction of market wealth to keep as cash on player

@@ -1,21 +1,25 @@
-/** A stock market script that only requires a portfolio to use!
- * It does this by "predicting" the state of the stock market by comparing the amount of 
- * change over a sample history of market prices. If the overall change is positive, then
- * it is positive. Otherwise, it is negative.
- * 
- * This is NOT a replacement for stock-bot.js! This is only for getting up to the amount 
- * needed to gain the APIs for it! This script is BRUTALLY slow and has been pointed out to
- * not really do anything the original author posted about in his really long post about it.
- * In fact, it has no problem spending money you do not own (it once landed me -$400b in debt!)
- * 
+/**
+ * stock-bot-v2.js - Alternate stock market script (lighter weight)
+ *
+ * Author: (original author attribution preserved in file)
+ *
+ * Usage:
+ * ```
+ * run stock-bot-v2.js
+ * ```
+ *
+ * Requirements:
+ * - API: ns.stock.getSymbols, ns.stock.getPrice, ns.stock.getMaxShares, ns.stock.getBidPrice, ns.stock.getAskPrice, ns.stock.short, ns.stock.buy, ns.getServerMoneyAvailable, ns.stock.getPosition, ns.nFormat, ns.alert, ns.sleep, ns.getPortHandle
+ * - RAM: TODO (suggested: 2.0 GB)
+ *
+ * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/stock-bot-v2.js
+ */
+
+/**
  *  Originally by: u/peter_lang
  *  Original URL: https://www.reddit.com/r/Bitburner/comments/rsqffz/bitnode_8_stockmarket_algo_trader_script_without/
- *  
- *  REQUIREMENTS:
- *    - WSE Account
- *    - Stock Market Access ($1b)
- *    - NONE of the APIs!
-**/
+ */
+
 const shortAvailable = true; 	// Requires you to be on BN 8.1 or have beaten 8.2
 const liquidateThresh = 31e9;	// Threshold to alert the player that they have enough to buy 4S API and Data
 const liquidateAtS4 = true;		// Will liquidate all stocks once alerted from above. Must buy 4S API and Data manually

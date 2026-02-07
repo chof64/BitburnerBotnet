@@ -1,15 +1,23 @@
-/** Buys private servers of increasing RAM size
- * This script will figure out the lowest memory size and will only upgrade
- * when the combined total of memory usage across your private servers goes
- * beyond a set limit (recommend 80% or 0.8).
- * 
- * When Deleting a server, it reports to the coordinator any unfinished tasks.
- * When buying a server, it will copy the necessary files and run the hack-daemon.
- * 
- * Can be run completely stand alone.
- * 	Written by: Zharay
- * 	URL: https://github.com/Zharay/BitburnerBotnet
-**/
+/**
+ * buy-server.js - Purchases personal servers when affordable.
+ *
+ * Author: Zharay (Original Repository: https://github.com/Zharay/BitburnerBotnet)
+ *
+ * Usage:
+ * ```
+ * run buy-server.js
+ * ```
+ * Example:
+ * ```
+ * run buy-server.js
+ * ```
+ *
+ * Requirements:
+ * - API: ns.getServerMoneyAvailable, ns.purchaseServer, ns.tprint, ns.sleep
+ * - RAM: TODO (suggested: 1.0 GB)
+ *
+ * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/buy-server.js
+ */
 
 
 /** @param {NS} ns */
