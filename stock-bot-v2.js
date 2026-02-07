@@ -14,12 +14,10 @@
  *
  * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/stock-bot-v2.js
  */
-
 /**
  *  Originally by: u/peter_lang
  *  Original URL: https://www.reddit.com/r/Bitburner/comments/rsqffz/bitnode_8_stockmarket_algo_trader_script_without/
  */
-
 const shortAvailable = true; 	// Requires you to be on BN 8.1 or have beaten 8.2
 const liquidateThresh = 31e9;	// Threshold to alert the player that they have enough to buy 4S API and Data
 const liquidateAtS4 = true;		// Will liquidate all stocks once alerted from above. Must buy 4S API and Data manually
@@ -122,11 +120,11 @@ export async function main(ns) {
 				continue;
 			}
 
-			myStocks.push({
-				"sym": sym,
-				"short": shortShares,
-				"long": longShares
-			});
+            myStocks.push({
+                "sym": sym,
+                "shortShares": shortShares,
+                "longShares": longShares
+            });
 
 			if (longShares > 0) {
 				const cost = longShares * longPrice;
@@ -201,20 +199,20 @@ export async function main(ns) {
 
 /**
  * Simply reports to the coordinator any stocks with longs/shorts. Doesn't run if port isn't empty though.
- * @param {NS} ns 
+ * @param {NS} ns
  * @param {Array} stocks
  */
 function reportStocks(ns, stocks) {
 	var outStocks = ns.getPortHandle(16);
 	if (!outStocks.empty()) return;
 
-	for (const stock of stocks) {
-		outStocks.tryWrite(JSON.stringify({
-			  "sym": stock.sym
-			, "short": stock.shortShares > 0
-			, "long": stock.longShares > 0
-			, "profitChange" : NaN
-			, "profitPotential" : NaN
-		}));
-	}
+    for (const stock of stocks) {
+        outStocks.tryWrite(JSON.stringify({
+              "sym": stock.sym
+            , "short": stock.shortShares > 0
+            , "long": stock.longShares > 0
+            , "profitChange" : NaN
+            , "profitPotential" : NaN
+        }));
+    }
 }

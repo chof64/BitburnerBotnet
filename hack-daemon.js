@@ -1,21 +1,26 @@
-/** The botnet's workers. 
- * The hack-daemon will intelligently hack, weaken, and grow with the 
- * exact amount of threads needed. It can also handle hack EXP farming,
- * sharing of the CPU (only for home and private servers), and stock
- * market manipulation!
- * 
- *	Written By: Zharay
- * 	URL: https://github.com/Zharay/BitburnerBotnet
- * 
- * 	Requires that the coordinator is running with targets posted via ports.
-**/
+/**
+ * hack-daemon.js - Runs on remote machines to perform hack/grow/weaken tasks and report to coordinator.
+ *
+ * Author: Zharay (Original Repository: https://github.com/Zharay/BitburnerBotnet)
+ *
+ * Usage:
+ * ```
+ * run hack-daemon.js
+ * ```
+ *
+ * Requirements:
+ * - API: ns.disableLog, ns.getHostname, ns.print, ns.tryWritePort, ns.getPortHandle, ns.getScriptRam, ns.getServerMaxRam, ns.getServerUsedRam, ns.run, ns.sleep, ns.getServerMinSecurityLevel, ns.getServerSecurityLevel, ns.getServerMoneyAvailable, ns.hackAnalyze, ns.hackAnalyzeChance, ns.getServerMaxMoney, ns.kill
+ * - RAM: TODO (suggested: 4.0 GB)
+ *
+ * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/hack-daemon.js
+ */
 
 
 /** @param {NS} ns */
 export async function main(ns) {
 	ns.disableLog("ALL");
 
-	const debug = false;			// 	Enables debug logs. 
+	const debug = false;			// 	Enables debug logs.
 	const homeCPU = 1;				//	The number of CPUs on your home server. Better to just set it here than waste RAM
 	const expRuns = 2;				//	The number of cycles to complete before looking to using your remaining RAM on EXP farms
 	const homeReservedRAM = 5;		// 	(GB) Amount of RAM to reserve on home server.
@@ -49,7 +54,7 @@ export async function main(ns) {
 	while (gTargets.peek() == "NULL PORT DATA") {
 		ns.print("Waiting for targets to be added by coordinator...")
 		await ns.sleep(1000);
-	}	
+	}
 
 	var randWait = 1000 * Math.floor(randomIntFromInterval(3, 30));
 	ns.print("Waiting for [" + (randWait / 1000) + "] seconds");
@@ -64,7 +69,7 @@ export async function main(ns) {
 	var weakenID = new Array(jTargets.length).fill(0);
 	var growID = new Array(jTargets.length).fill(0);
 	var hackID = new Array(jTargets.length).fill(0);
-	
+
 	var curRuns = 0;
 	var reservedRam = host == "home" ? homeReservedRAM : 0;
 
@@ -108,14 +113,14 @@ export async function main(ns) {
 			 * 						2) Or if there is a reported security risk
 			 * 						3) If we even have enough to run the script
 			 * 						4) If there is no lock
-			 */						
+			 */
 			var securityThreshold = ns.getServerMinSecurityLevel(target) + 5;
-			if (jStatus[indexTarget].isTarget 
-					&& (ns.getServerSecurityLevel(target) > securityThreshold || jStatus[indexTarget].security > 5) 
-					&& (ns.getScriptRam("weaken.js") <= ns.getServerMaxRam(host) - ns.getServerUsedRam(host) - reservedRam) 
+			if (jStatus[indexTarget].isTarget
+					&& (ns.getServerSecurityLevel(target) > securityThreshold || jStatus[indexTarget].security > 5)
+					&& (ns.getScriptRam("weaken.js") <= ns.getServerMaxRam(host) - ns.getServerUsedRam(host) - reservedRam)
 					&& currentLocks.weakenLock == "") {
 
-				// Try to set lock		
+				// Try to set lock
 				jLockRequest.task = "weaken";
 				jLockRequest.done = false;
 				ns.print(`[${target}] Attempting to lock weakening...`)
@@ -148,7 +153,7 @@ export async function main(ns) {
 					// If there is a security breach, multiply the threads we need by 2x
 					var reqThreads = (Math.ceil((ns.getServerSecurityLevel(target) + securityThreat - securityThreshold) / 0.05) * securityBreach) - currentThreads;
 					var numThreads = Math.min(reqThreads, Math.floor((ns.getServerMaxRam(host) - ns.getServerUsedRam(host) - reservedRam) / ns.getScriptRam("weaken.js")));
-					
+
 					if (numThreads > 0) {
 						ns.print(`[${target}] Weakening... (Threads: ${numThreads})`);
 						weakenID[indexTarget] = ns.run("weaken.js", numThreads, target, host, numThreads, ns.getScriptRam("weaken.js")*numThreads, 0);
@@ -158,7 +163,7 @@ export async function main(ns) {
 
 					ns.print("Sleeping for 1 sec...")
 					await ns.sleep(1000);
-					
+
 					jLockRequest.done = true;
 					ns.print(`[${target}] Removing weakening lock down...`);
 					await outLock.tryWrite(JSON.stringify(jLockRequest));
@@ -168,10 +173,10 @@ export async function main(ns) {
 			} else if (currentLocks.weakenLock != "") {
 				ns.print(`[${target}] LOCKED : [${currentLocks.weakenLock}] has locked weakening...`);
 			}
-		
+
 			if (fHostKill.peek() == host)
 				break;
-		
+
 			await ns.sleep(400);
 			jStatus = JSON.parse(gStatus.peek());
 			jLocks = JSON.parse(gLock.peek());
@@ -184,10 +189,10 @@ export async function main(ns) {
 			 * 					If there is no lock set.
 			 */
 			if (((jStatus[indexTarget].isTarget && !jStatus[indexTarget].isLong && !jStatus[indexTarget].isShort) || (jStatus[indexTarget].isLong && jStatus[indexTarget].profitChange < 0))
-					&& (ns.getServerMoneyAvailable(target) - (ns.getServerMoneyAvailable(target) - (ns.hackAnalyze(target) * jStatus[indexTarget].hackThreads * ns.hackAnalyzeChance(target)))) < (ns.getServerMaxMoney(target)*0.98) 
-					&& (ns.getScriptRam("grow.js") <= ns.getServerMaxRam(host) - ns.getServerUsedRam(host) - reservedRam) 
+					&& (ns.getServerMoneyAvailable(target) - (ns.getServerMoneyAvailable(target) - (ns.hackAnalyze(target) * jStatus[indexTarget].hackThreads * ns.hackAnalyzeChance(target)))) < (ns.getServerMaxMoney(target)*0.98)
+					&& (ns.getScriptRam("grow.js") <= ns.getServerMaxRam(host) - ns.getServerUsedRam(host) - reservedRam)
 					&& currentLocks.growLock == "") {
-				
+
 				// Try to set lock
 				jLockRequest.task = "grow";
 				jLockRequest.done = false;
@@ -216,13 +221,13 @@ export async function main(ns) {
 					// Hacking = [% Amount Taken] * Max * NumThreads * Chance
 					// Above ignored if (Available == 0 || amountGrow <= 0)
 					var amountGrow = ns.getServerMaxMoney(target) / (ns.getServerMoneyAvailable(target) - (ns.hackAnalyze(target) * ns.getServerMoneyAvailable(target) * jStatus[indexTarget].hackThreads * ns.hackAnalyzeChance(target)));
-					
+
 					var reqThreads = 1;
 					if (ns.getServerMoneyAvailable(target) == 0 || amountGrow <= 0)
 						reqThreads = (ns.getServerMaxRam(host) - ns.getServerUsedRam(host) - reservedRam) / ns.getScriptRam("grow.js");
-					else 
+					else
 						reqThreads = ns.growthAnalyze(target, amountGrow, (host == "home" ? homeCPU : 1)) - currentThreads;
-					
+
 					var numThreads = Math.floor(Math.min(reqThreads, (ns.getServerMaxRam(host) - ns.getServerUsedRam(host) - reservedRam) / ns.getScriptRam("grow.js")));
 
 					if (numThreads > 0) {
@@ -231,10 +236,10 @@ export async function main(ns) {
 					} else {
 						ns.print(`[${target}] Skipping growth. Enough threads working on it. [${numThreads} / ${currentThreads}]`);
 					}
-					
+
 					ns.print("Sleeping for 1 sec...")
 					await ns.sleep(1000);
-					
+
 					jLockRequest.done = true;
 					ns.print(`[${target}] Removing growth lock down...`);
 					await outLock.tryWrite(JSON.stringify(jLockRequest));
@@ -265,7 +270,7 @@ export async function main(ns) {
 			if (((jStatus[indexTarget].isTarget && !jStatus[indexTarget].isLong && !jStatus[indexTarget].isShort) || ((jStatus[indexTarget].isShort && jStatus[indexTarget].profitChange > 0)))
 					&& ((ns.getServerMoneyAvailable(target)  >= moneyThreshold) || jStatus[indexTarget].isShort)
 					&& ns.hackAnalyzeChance(target) >= 0.1
-					&& (ns.getScriptRam("hack.js") <= ns.getServerMaxRam(host) - ns.getServerUsedRam(host) - reservedRam) 
+					&& (ns.getScriptRam("hack.js") <= ns.getServerMaxRam(host) - ns.getServerUsedRam(host) - reservedRam)
 					&& currentLocks.hackLock == "") {
 
 				// Try to set lock
@@ -301,10 +306,10 @@ export async function main(ns) {
 					} else {
 						ns.print(`[${target}] Skipping hack. Enough threads working on it. [${numThreads} / ${currentThreads}]`);
 					}
-					
+
 					ns.print("Sleeping for 1 sec...")
 					await ns.sleep(1000);
-					
+
 					jLockRequest.done = true;
 					ns.print(`[${target}] Removing hack lock down...`);
 					await outLock.tryWrite(JSON.stringify(jLockRequest));
@@ -332,7 +337,7 @@ export async function main(ns) {
 		ns.print(`EXP Ram Left: ${availableRAM} (Req: ${minRamRequired})`);
 		if (availableRAM >= minRamRequired && jExp.length > 0 && curRuns >= expRuns) {
 			ns.print("Dedicating free RAM to EXP Farming...");
-			
+
 			var farmIndex = randomIntFromInterval(1, jExp.length) - 1;
 			ns.print("[EXP] You have chosen [" + jExp[farmIndex].target + "]");
 
@@ -343,17 +348,17 @@ export async function main(ns) {
 
 			if (weakThreads >= 1) {
 				ns.print("[EXP] Running " + weakThreads + " weakens on [" + jExp[farmIndex].target + "]");
-				ns.run("weaken.js", weakThreads, jExp[farmIndex].target, "EXP", weakThreads);				
+				ns.run("weaken.js", weakThreads, jExp[farmIndex].target, "EXP", weakThreads);
 			}
 			if (growThreads >= 1) {
 				ns.print("[EXP] Running " + growThreads + " growths on [" + jExp[farmIndex].target + "]");
-				ns.run("grow.js", growThreads, jExp[farmIndex].target, threshModifier, "EXP", growThreads);				
+				ns.run("grow.js", growThreads, jExp[farmIndex].target, threshModifier, "EXP", growThreads);
 			}
 			if (hackThreads >= 1) {
 				ns.print("[EXP] Running " + hackThreads + " hacks on [" + jExp[farmIndex].target + "]");
-				ns.run("hack.js", hackThreads, jExp[farmIndex].target, "EXP", hackThreads);				
+				ns.run("hack.js", hackThreads, jExp[farmIndex].target, "EXP", hackThreads);
 			}
-			
+
 			curRuns = 0;
 		}
 		else if (curRuns < expRuns) curRuns++;
@@ -377,6 +382,6 @@ export async function main(ns) {
 /** @param {min} min number
  *  @param {max} max number
  */
-function randomIntFromInterval(min, max) { // min and max included 
+function randomIntFromInterval(min, max) { // min and max included
   return Math.max(Math.floor(Math.random() * (max - min + 1)) + min, 0);
 }

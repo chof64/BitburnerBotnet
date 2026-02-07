@@ -1,24 +1,23 @@
-/**A hacker gang manager!
- * Unlike every "guide" or script out there, here is a gang script specifically
- * for hacking gangs! The setup is simpler, the micromanagement is lower, but the 
- * money gain is slower in terms of ramp up.
- * 
- * Hacker Gangs:
- *  - They do not need to worry about territory or their wars (although it can help)
- *  - They only care about hacking and charisma (so cars and such do matter)
- *  - Have a really low ramp up and require training, rootkits, and augments.
- *  - Best when you have other means of income (corporation, stocks, botnet, hacknet)
- * 
+/**
+ * gang-nullsec.js - Manages a hacker gang; automates member training and production.
+ *
+ * Author: Zharay (Original Repository: https://github.com/Zharay/BitburnerBotnet)
+ *
+ * Usage:
+ * ```
+ * run gang-nullsec.js
+ * ```
+ *
  * Requirements:
- *  - Access to Gangs (BN-2)
- *  - Formulas API (For now?)
- *  - [Recommended] Other means of money as this can and will be slow
- * 
- * 	Written By: Zharay
- *  URL: https://github.com/Zharay/BitburnerBotnet
-**/
+ * - API: ns.* (uses gang APIs and other ns functions)
+ * - Game: Access to Gangs (BN-2)
+ * - Notes: Uses Formulas API in places where specified
+ * - RAM: TODO (suggested: 2.0 GB)
+ *
+ * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/gang-nullsec.js
+ */
 
-const useFormulas = true;           // Will use functions that require Formulas API [Currently REQUIRED] 
+const useFormulas = true;           // Will use functions that require Formulas API [Currently REQUIRED]
 const spendAmount = 0.2;            // Multiplier of player's money to spend
 const maxWantedGain = 0;            // Maximum wanted level gained per tick
 const initialHackLevel = 120;       // New recruits will train to this amount of hacking
@@ -28,7 +27,7 @@ const trainToMod = 0.5;             // After ascension, train to previous hack l
 /** @param {NS} ns */
 export async function main(ns) {
     ns.disableLog("ALL");
-    
+
     // First check if we are in a gang. If not, keep trying to create one.
     while(!ns.gang.inGang()) {
         for (let gangName of hackerGangs) {
@@ -36,7 +35,7 @@ export async function main(ns) {
         }
         await ns.sleep(2000);
     }
-    
+
     var grunts = [...ns.gang.getMemberNames().map(_name => {return {name: _name}})];
 
     if (!ns.gang.getGangInformation().isHacking) {
@@ -73,8 +72,8 @@ export async function main(ns) {
 
 /**
  * Handles each grunt's task. We train them if they need training. The rest is done via wanted gain budget.
- * @param {NS} ns 
- * @param {Object[]} grunts 
+ * @param {NS} ns
+ * @param {Object[]} grunts
  */
 function handleTasks(ns, grunts) {
     let tasks = [...ns.gang.getTaskNames().map(_name => {
@@ -89,11 +88,11 @@ function handleTasks(ns, grunts) {
         handleTasksManually(ns, grunts, tasks);
         return;
     }
-    
+
     let lowestWantedGain = 0;
     let curWantedGain = 0;
     let lowestWantedName = "";
-    
+
     // Sort by wanted gain then calculate the minimum wanted gain we can currently get.
     tasks.sort((x, y) => x.baseWanted - y.baseWanted);
     grunts.forEach(g => {lowestWantedGain += g[tasks[0].name].wantedGain});
@@ -105,7 +104,7 @@ function handleTasks(ns, grunts) {
             // If you haven't trained enough (or at all), train!
             if (ns.gang.setMemberTask(grunt.name, "Train Hacking"))
                 ns.print(`[${grunt.name}] assigned to Train Hacking!`);
-            else 
+            else
                 ns.print(`ERROR: Failed to assign [${grunt.name}] to Train Hacking...`);
         } else if (grunt.task == "Train Hacking" && (grunt.oldHack == 0 && grunt.hack > initialHackLevel)) {
             // If you are new and are training, stop when you reach your goal, set oldHack to your current hack for the next go `round
@@ -116,7 +115,7 @@ function handleTasks(ns, grunts) {
             let foundTask = false;
             for(const task of tasks) {
                 if (foundTask) continue;
-                
+
                 // We only accept this task if it is within our limits (we have enough negative wanted gain and we won't be going over our max wanted gain by choosing it)
                 if (grunt[task.name].wantedGain + curWantedGain <= -lowestWantedGain && (lowestWantedGain - grunt[lowestWantedName].wantedGain) + grunt[task.name].wantedGain <= maxWantedGain) {
                     //ns.print(`[${grunt.name}] ${task.name}\t\t${ns.nFormat(grunt[task.name].wantedGain, "0.000")} + ${ns.nFormat(curWantedGain, "0.000")} (${ns.nFormat(grunt[task.name].wantedGain + curWantedGain, "0.000")}) <= ${ns.nFormat(lowestWantedGain, "0.000")} && ${ns.nFormat(lowestWantedGain, "0.000")} - ${ns.nFormat(grunt[lowestWantedName].wantedGain, "0.000")} + ${ns.nFormat(grunt[task.name].wantedGain, "0.000")} (${ns.nFormat(lowestWantedGain - grunt[lowestWantedName].wantedGain + grunt[task.name].wantedGain, "0.000")}) <= ${maxWantedGain}`);
@@ -134,7 +133,7 @@ function handleTasks(ns, grunts) {
                     } else {
                         ns.print(`ERROR: Failed to assign [${grunt.name}] to ${task.name}...`);
                     }
-                } 
+                }
             }
         }
     }
@@ -142,9 +141,9 @@ function handleTasks(ns, grunts) {
 
 /**
  * TODO: A manual method of the above. It'd have to do so without relying on formulas... which I do NOT wanna do lol.
- * @param {NS} ns 
- * @param {Object[]} grunts 
- * @param {Object[]} tasks 
+ * @param {NS} ns
+ * @param {Object[]} grunts
+ * @param {Object[]} tasks
  */
 function handleTasksManually(ns, grunts, tasks) {
     for (const task of tasks) {
@@ -154,8 +153,8 @@ function handleTasksManually(ns, grunts, tasks) {
 
 /**
  * Handles the ascension of grunts. Will only do so if the multiplier is high enough and if we have enough respect.
- * @param {NS} ns 
- * @param {Object[]} grunts 
+ * @param {NS} ns
+ * @param {Object[]} grunts
  */
 function handleAscension(ns, grunts) {
     for (var grunt of grunts) {
@@ -173,8 +172,8 @@ function handleAscension(ns, grunts) {
 
 /**
  * Handles the purchasing of equipment by buying whatever is cheapest first.
- * @param {NS} ns 
- * @param {Object[]} grunts 
+ * @param {NS} ns
+ * @param {Object[]} grunts
  */
 function handleEquips(ns, grunts) {
     // Fills with all the info we need. Then filter and sort it.
@@ -202,7 +201,7 @@ function handleEquips(ns, grunts) {
  * Obtains the latest grunt info and sorts the list by hack level.
  * This does it via Object.keys() as we are adding/modifying each entry as needed elsewhere.
  * If you have the Formulas API you also get the faster task info.
- * @param {NS} ns 
+ * @param {NS} ns
  * @param {Object[]} grunts Updated via pass-by-reference
  */
 function updateGrunts(ns, grunts) {
@@ -216,7 +215,7 @@ function updateGrunts(ns, grunts) {
 
         // Obtain formulas only data for each available task
         if (useFormulas) {
-            
+
             ns.gang.getTaskNames().forEach(taskName => {
                 if (ns.gang.getTaskStats(taskName).isHacking) {
                     grunts[i][taskName] = {};
@@ -235,7 +234,7 @@ function updateGrunts(ns, grunts) {
 /**
  * Will attempt to generate a random grunt name from a pre-made list.
  * If it cannot find a unique name, it will randomize the case of each letter.
- * @param {NS} ns 
+ * @param {NS} ns
  * @returns {String}
  */
 function generateName(ns) {
@@ -262,6 +261,6 @@ const hackerGangs = ["The Black Hand", "NiteSec"];
 
 // List of grunt names to use. Mostly gods and actual hackers/hacker groups lol
 const gruntNames = ["4chan", "8chan", "Anon", "Anonymous", "Mano", "Crazy", "Hax0r", "Rez", "Kou", "Zeus", "Poseidon", "Chronos", "Eros", "Achlys", "Aether", "Aion", "Ananke", "Chaos", "Erebus", "Hemera", "Hypnos", "Nemesis",
-                    "Nesoi", "Nyx", "Ourea", "Pontus", "Tartarus", "Thalassa", "Thanatos", "Ura", "Cronus", "Demeter", "Hades", "Hera", "Apollo", "Art3mis", "Parzival", "Aphrodite", "Ares", "Hephaestus", "Hermes", "Athena", 
-                    "Dionysus", "Hestia", "Hecate", "Aeolus", "PedoBear", "FeelsBadMan.jpg", "AreYaWinningSon?", "Ero", "xXxXxXx", "Lain", ".hack", "Shadow", "Empress", "3DM", "CLASS", "CODEX", "DEViANCE", "Echelon", "EVO", 
+                    "Nesoi", "Nyx", "Ourea", "Pontus", "Tartarus", "Thalassa", "Thanatos", "Ura", "Cronus", "Demeter", "Hades", "Hera", "Apollo", "Art3mis", "Parzival", "Aphrodite", "Ares", "Hephaestus", "Hermes", "Athena",
+                    "Dionysus", "Hestia", "Hecate", "Aeolus", "PedoBear", "FeelsBadMan.jpg", "AreYaWinningSon?", "Ero", "xXxXxXx", "Lain", ".hack", "Shadow", "Empress", "3DM", "CLASS", "CODEX", "DEViANCE", "Echelon", "EVO",
                     "FAiRLiGHT", "HATRED", "PARADOX", "Phrozen", "PROPHET", "Razor1911", "RELOADED", "REVOLT", "SKIDROW", "STEAMPUNKS", "ViTALiTY", "NEO", "NULL", "CYPRUS"]

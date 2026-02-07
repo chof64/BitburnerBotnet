@@ -1,5 +1,5 @@
 /**
- * optional/liquidate.js - Liquidates positions or clears ports as needed.
+ * optional/liquidate.js - Signals the stock-bot to liquidate positions and shutdown.
  *
  * Author: Zharay (Original Repository: https://github.com/Zharay/BitburnerBotnet)
  *
@@ -17,13 +17,13 @@
 
 /** @param {NS} ns */
 export async function main(ns) {
-	if (ns.peek(19) == "share") {
+    if (ns.peek(19) == "share") {
         ns.tprint("Clearing liquidation...");
         await ns.clearPort(19);
-	ns.tprint("Have a nice day :)");
+        ns.tprint("Have a nice day :)");
     } else {
         ns.tprint("Liquidating assets...");
         await ns.tryWritePort(19, "sell");
-		ns.tprint("Mo' Money Mo' Money ;)");
+        ns.tprint("Mo' Money Mo' Money ;)");
     }
 }

@@ -35,7 +35,7 @@ export async function main(ns) {
 	var isCorpo = false;
 	var isGang = false;
 	processes.forEach( function(x) {
-		if (x.filename != "restart-scripts.js" 
+		if (x.filename != "restart-scripts.js"
 				&& x.filename != "stock-bot.js" && x.filename != "stock-bot-v2.js"
 				&& x.filename != "corpo.js" && x.filename != "gang-nullsec.js")
 			ns.kill(x.pid);
@@ -54,7 +54,7 @@ export async function main(ns) {
 		jHosts.forEach( (h) => {
 			if (h.host == "home")
 				return;
-				
+
 			ns.tprint("Killing all scripts on [" + h.host + "]");
 			ns.killall(h.host);
 		});
@@ -74,7 +74,7 @@ export async function main(ns) {
 	// Tell private servers to share CPU cycles
 	if (enableShare) {
 		ns.tprint("Telling private servers to start sharing...");
-        await ns.tryWritePort(17, "share");
+		await ns.tryWritePort(17, "share");
 	}
 
 	// Stock bot goes here

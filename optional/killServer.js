@@ -1,15 +1,24 @@
-/**A script for sending a kill command to a specific hack-daemon in the network.
- * It does this by sending the server's name to port 18.
- * If the hack-daemon see's its hostname on this port, it will shutdown.
- * 
- * 	Written By: Zharay
- * 	URL: https://github.com/Zharay/BitburnerBotnet
-**/
+/**
+ * optional/killServer.js - Utility to kill scripts on a specified server.
+ *
+ * Author: Zharay (Original Repository: https://github.com/Zharay/BitburnerBotnet)
+ *
+ * Usage:
+ * ```
+ * run optional/killServer.js [hostname]
+ * ```
+ *
+ * Requirements:
+ * - API: ns.disableLog, ns.args, ns.tprint, ns.serverExists, ns.tryWritePort
+ * - RAM: TODO (suggested: 0.6 GB)
+ *
+ * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/optional/killServer.js
+ */
 
 /** @param {NS} ns */
 export async function main(ns) {
 	ns.disableLog("ALL");
-	
+
 	var host = "";
 	if (ns.args.length) {
 		host = ns.args[0];

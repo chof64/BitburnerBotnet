@@ -1,9 +1,19 @@
-/**Hack() script.
- * This will report via ports to the coordinator which has 0 RAM cost!
- * Requires the hack-daemon!
- * 	Written By: Zharay
- *  URL: https://github.com/Zharay/BitburnerBotnet
-**/
+/**
+ * hack.js - Performs hacking on a target server.
+ *
+ * Author: Zharay (Original Repository: https://github.com/Zharay/BitburnerBotnet)
+ *
+ * Usage:
+ * ```
+ * run hack.js [target] [host] [threads] [RAM] [securityRisk]
+ * ```
+ *
+ * Requirements:
+ * - API: ns.hack, ns.tryWritePort, ns.print, ns.serverExists
+ * - RAM: TODO (suggested: 2.0 GB)
+ *
+ * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/hack.js
+ */
 
 /** @param {NS} ns */
 export async function main(ns) {

@@ -1,21 +1,23 @@
-/**An upgrade manager for the HackNet!
- * Intelligently purchases and upgrades servers of your hacknet. It
- * will do so by only upgrading the bits that are cheapest before bringing 
- * the rest of the farm up to the same level.
- * 
- * This script super efficient with your money and will only stop when it 
- * reaches whatever you've set the max income to.
- * 
- * Can be run completely stand alone!
- * 
- * 	Originally By: ?????
- *	NOTE: IF YOU KNOW WHO WROTE THIS SCRIPT PLEASE TELL ME!! 
- *	I want to buy that person a beer lol. This script is super clean!
-**/
+/**
+ * hacknet-mgr.js - Manages Hacknet nodes and upgrades for optimal income.
+ *
+ * Author: Zharay (Original Repository: https://github.com/Zharay/BitburnerBotnet)
+ *
+ * Usage:
+ * ```
+ * run hacknet-mgr.js [maxIncome] [spendPercentage]
+ * ```
+ *
+ * Requirements:
+ * - API: ns.hacknet.maxNumNodes, ns.hacknet.numNodes, ns.hacknet.getPurchaseNodeCost, ns.hacknet.purchaseNode, ns.disableLog, ns.print, ns.hacknet.getNodeStats, ns.nFormat, ns.hacknet.getLevelUpgradeCost, ns.hacknet.upgradeLevel, ns.hacknet.getRamUpgradeCost, ns.hacknet.upgradeRam, ns.hacknet.getCoreUpgradeCost, ns.hacknet.upgradeCore, ns.sleep, ns.getHacknetMultipliers
+ * - RAM: TODO (suggested: 2.0 GB)
+ *
+ * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/hacknet-mgr.js
+ */
 
 /** @param {NS} ns **/
 export async function main(ns) {
-	
+
 	/** OPTIONS */
 	const maxIncome = 1e9;
 	const spendPercentage = 0.1;

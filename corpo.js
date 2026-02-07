@@ -1,20 +1,19 @@
-/** Script to run your corporation for you.
- * Automates your corporation smartly by strictly following the guide below.	
- * (Master Guide))[https://docs.google.com/document/d/15hN60PmzmpXpT_JC8z_BU47gaZftAx4zaOnWAOqwoMw/edit?usp=sharing]
- * Please follow the first section before even starting this script!
- * RECOMMENDED THAT YOU START A BUSINESS IN SOMETHING SIMPLE LIKE AGRICULTURE FIRST!
- * 
- * 	Heavily Rewritten By: Zharay
- * 	Originally By: Kamukrass
- * 	Original URL: https://github.com/kamukrass/Bitburner/blob/develop/corp.js
- * 	Mod URL: https://github.com/Zharay/BitburnerBotnet
- * 	REQUIRES:
- * 		- 1TB RAM
- * 		- $150b (personal)
- * 		- Office API ($50b corp funds)
- * 		- Warehouse API ($50b corp funds)
- * 		- DO NOT GET THOSE API UNTIL YOU HAVE PROFITS
-**/
+/**
+ * corpo.js - Automated Corporation manager script (large, many APIs).
+ *
+ * Author: Zharay (Original Repository: https://github.com/Zharay/BitburnerBotnet)
+ *
+ * Usage:
+ * ```
+ * run corpo.js
+ * ```
+ *
+ * Requirements:
+ * - API: ns.* (various corporation and management APIs)
+ * - RAM: TODO (suggested: 1.0 GB)
+ *
+ * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/corpo.js
+ */
 
 /** Options */
 const debug = false;				// Enables more text information in console log
@@ -109,15 +108,15 @@ export async function main(ns) {
 		// Upgrade Smart Factories and Smart Storage to 10 ($110b left)
 		// Upgrade Warehouses to 2k ($45b left or more if you did the investor trick)
 
-		// Obtain at each city: 2800 Hardware, 96 Robots, 2.52k AI Cores, 146.4k Real Estate 
+		// Obtain at each city: 2800 Hardware, 96 Robots, 2.52k AI Cores, 146.4k Real Estate
 			// ACTUAL VALUES (one 10sec tick) = Hardware: 267.5 | Robots: 9.6 | AI Cores: 244.5 | Real Estate: 11940
 		// Will end up with little to no funds after
 
 		// Find Investor for $5t for 10% stock.
 			// Once again, if you are not getting no where this amount then do the trick mentioned above.
-		
+
 		// Upgrade Warehouses to 3.8k
-		// Obtain at each city: 9.3k Hardware, 726 Robots, 6.27k AI Cores, 230.4k Real Estate 
+		// Obtain at each city: 9.3k Hardware, 726 Robots, 6.27k AI Cores, 230.4k Real Estate
 			// ACTUAL VALUES (one 10sec tick) = Hardware: 650 | Robots: 63 | AI Cores: 375 | Real Estate: 8400
 		// Will end up with $4.8b, 500~ Production, and $32m/sec in Profits. Very Nice.
 		// Even better, you should have plenty left over to start this script!
@@ -175,7 +174,7 @@ export async function main(ns) {
 		// The main loop for managing your corporation
 		for (const division of corp.divisions.reverse()) {
 			// Skip any industry that cannot make products (ie. Agriculture)
-			if (!division.makesProducts) { 
+			if (!division.makesProducts) {
 				// ns.print (`Skipping [${division.name}]`);
 				continue;
 			}
@@ -212,7 +211,7 @@ export async function main(ns) {
 
 /**
  * Purchase upgrades and unlocks based on available funds and priority; see upgradeList
- * @param {NetScript} ns 
+ * @param {NetScript} ns
  */
 function handleUpgrades(ns) {
 	for (const upgrade of upgradeList) {
@@ -222,7 +221,7 @@ function handleUpgrades(ns) {
 			ns.corporation.levelUpgrade(upgrade.name);
 		}
 	}
-	
+
 	// Only get shady accounting or Government Partnership if you have 4x the funds (ie. end game)
 	if (!ns.corporation.hasUnlockUpgrade("Shady Accounting") && ns.corporation.getUnlockUpgradeCost("Shady Accounting") * 4 < ns.corporation.getCorporation().funds) {
 		ns.print(`[CORP] Unlocking Shady Accounting (${ns.nFormat(ns.corporation.getUnlockUpgradeCost("Shady Accounting"), "$0.00a")})`)
@@ -235,8 +234,8 @@ function handleUpgrades(ns) {
 
 /**
  * Primary function that handles each product for a specific division. It will constantly create new products when the maximum is reached.
- * @param {NetScript} ns 
- * @param {Division} division 
+ * @param {NetScript} ns
+ * @param {Division} division
  * @returns NULL
  */
  async function handleProducts(ns, division) {
@@ -265,7 +264,7 @@ function handleUpgrades(ns) {
 		await determineMaxMarketPrice(ns, division, productName);
 	}
 
-	var maxProducts = 3	+ (ns.corporation.hasResearched(division.name, "uPgrade: Capacity.I") ? 1 : 0) 
+	var maxProducts = 3	+ (ns.corporation.hasResearched(division.name, "uPgrade: Capacity.I") ? 1 : 0)
 						+ (ns.corporation.hasResearched(division.name, "uPgrade: Capacity.II") ? 1 : 0);
 
 	if (division.products.length < maxProducts && !isDeveloping) {
@@ -309,9 +308,9 @@ function handleUpgrades(ns) {
 
 /**
  * Will try and determine what the maximum Market Price is for each product.
- * @param {NetScript} ns 
- * @param {Division} division 
- * @param {String} productName 
+ * @param {NetScript} ns
+ * @param {Division} division
+ * @param {String} productName
  * @returns null
  */
 async function determineMaxMarketPrice(ns, division, productName) {
@@ -377,20 +376,20 @@ async function determineMaxMarketPrice(ns, division, productName) {
 		// If we found a rating to base our MP on, find the multiplier and power.
 		ns.print(`[${division.name}] Using another product's MP to start (${bestMP})`);
 		mpMultiplier = parseInt(bestMP.split("*")[1]);
-	} else if (product.cityData["Aevum"][1].toFixed(2) != product.cityData["Aevum"][2].toFixed(2) 
+	} else if (product.cityData["Aevum"][1].toFixed(2) != product.cityData["Aevum"][2].toFixed(2)
 				&& String(product.sCost).includes("*") && String(product.sCost).split("*")[1] != "1") {
-		// We get here if we couldn't find a base 
+		// We get here if we couldn't find a base
 		ns.print(`[${division.name}] Using original MP to start (${product.sCost})`);
 		mpMultiplier = parseInt(product.sCost.split("*")[1]);
 	}
-	
+
 	// First determine the power
 	mpPower = parseInt(mpMultiplier.toExponential().split("+")[1]) - 1 ;
 	mpPower = mpPower < 0 ? 0 : mpPower;
 
 	// Then determine our multiplier (shift it by 1 decimal if its a whole number type, leave it alone if is decimal)
 	mpMultiplier = parseFloat(mpMultiplier.toExponential().split("e")[0]) * (mpMultiplier.toExponential().includes(".") && !indOpt.mpDecimal ? 10 : 1);
-	
+
 	// Now modify our exponential so we start a little lower
 	var newExp = modExponential(mpMultiplier, mpPower, indOpt.mpDecimal, -5);
 	mpMultiplier = newExp.multi;
@@ -403,17 +402,17 @@ async function determineMaxMarketPrice(ns, division, productName) {
 	// cityData : [{"city": [quantity, producing, selling]}]
 	// This gets updated every tick. Best case, if you are producing 8/sec, you want to be selling 8/sec
 
-	// We loop until the number produced is equal to the number sold. (woo do..while loops!) 
+	// We loop until the number produced is equal to the number sold. (woo do..while loops!)
 	do {
 		newMP = parseFloat(mpMultiplier.toFixed(1) + "e" + mpPower);
 		ns.print(`[${division.name}] ${product.name} is not selling optimally. Determining max market price (MP * ${newMP})...`);
 		ns.corporation.sellProduct(division.name, "Aevum", productName, "MAX", `MP*${newMP}`, true);
-		
+
 		// We always go from 1 to 99 before going up a power (ie. 1e0 = 1, 99e0 = 99, 10e1 = 100, 99e1 = 990...)
 		// In my previous runs, once you go beyond 100, the granularity goes out the window.
 
 		//ns.print(`[${division.name}] ${productName}: Producing: ${ns.nFormat(product.cityData["Aevum"][1],"0.000")} | Selling: ${ns.nFormat(product.cityData["Aevum"][2],"0.000")}`);
-			
+
 		newExp = modExponential(mpMultiplier, mpPower, indOpt.mpDecimal, indOpt.mpDecimal ? 2 : 1);
 		mpMultiplier = newExp.multi;
 		mpPower = newExp.pow;
@@ -430,7 +429,7 @@ async function determineMaxMarketPrice(ns, division, productName) {
 	newExp = modExponential(mpMultiplier, mpPower, indOpt.mpDecimal, indOpt.mpDecimal ? -4 : -2);
 	mpMultiplier = newExp.multi;
 	mpPower = newExp.pow;
-	
+
 	newMP = parseFloat(mpMultiplier.toFixed(1) + "e" + mpPower);
 	ns.print(`[${division.name}] ${product.name}'s optimal MP has been found (MP * ${newMP})...`);
 	ns.corporation.sellProduct(division.name, "Aevum", productName, "MAX", `MP*${newMP}`, true);
@@ -438,8 +437,8 @@ async function determineMaxMarketPrice(ns, division, productName) {
 
 /**
  * Handles the purchasing of Advertisements per division.
- * @param {NetScript} ns 
- * @param {Division} division 
+ * @param {NetScript} ns
+ * @param {Division} division
  */
 function handleAds(ns, division) {
 	if (ns.corporation.getCorporation().funds >= ns.corporation.getHireAdVertCost(division.name)) {
@@ -449,16 +448,16 @@ function handleAds(ns, division) {
 }
 
 /**
- * 
- * @param {NetScript} ns 
- * @param {Division} division 
- * @param {String} productCity 
+ *
+ * @param {NetScript} ns
+ * @param {Division} division
+ * @param {String} productCity
  */
 async function handleEmployees(ns, division, productCity = "Aevum") {
 	var areCitiesCaughtUp = true;
 	for (var city of division.cities) {
 		// He handle the productCity AFTER the others are done.
-		if (city == productCity) 
+		if (city == productCity)
 			continue;
 
 		// We only upgrade if the productCity is more than 60 positions ahead (and if we have the money)
@@ -486,7 +485,7 @@ async function handleEmployees(ns, division, productCity = "Aevum") {
  */
 async function expandEmployees(ns, division, city, numToHire = 15) {
 	if (numToHire != 0) {
-		// Only hire if we are asked to do so 
+		// Only hire if we are asked to do so
 		ns.print(`[${division.name}] Upgrading ${division.name}'s office in ${city}`);
 		await waitForFunds(ns, ns.corporation.getOfficeSizeUpgradeCost(division.name, city, numToHire));
 
@@ -513,8 +512,8 @@ async function expandEmployees(ns, division, city, numToHire = 15) {
 
 /**
  * Handles research of a particular division. Mostly unchanged from original.
- * @param {NetScript} ns 
- * @param {Division} division 
+ * @param {NetScript} ns
+ * @param {Division} division
  */
 function handleResearch(ns, division) {
 	const laboratory = "Hi-Tech R&D Laboratory"
@@ -541,7 +540,7 @@ function handleResearch(ns, division) {
 
 			ns.print(`[${division.name}] is researching ${marketTAI}`);
 			ns.corporation.research(division.name, marketTAI);
-			
+
 			ns.print(`[${division.name}] is researching ${marketTAII}`);
 			ns.corporation.research(division.name, marketTAII);
 
@@ -567,8 +566,8 @@ function handleResearch(ns, division) {
 
 /**
  * Iterates a division's cities and upgrades the warehouse if near capacity. This is technically a problem.
- * @param {NetScript} ns 
- * @param {Division} division 
+ * @param {NetScript} ns
+ * @param {Division} division
  */
 function handleWarehouses(ns, division) {
 	var isWarehouseFull = false;
@@ -591,7 +590,7 @@ function handleWarehouses(ns, division) {
 }
 
 /**
- * Initializes a division for the first time. 
+ * Initializes a division for the first time.
  * @param {NetScript} ns NetScript reference
  * @param {Division} division Division reference
  * @param {String} productCity Name of the city that will be a main production city.
@@ -599,7 +598,7 @@ function handleWarehouses(ns, division) {
 async function initCities(ns, division, productCity = "Aevum") {
 
 	for (const city of cities) {
-		
+
 		// Expand into another city. Costs $5b each ($4b for city, $1b for warehouse)
 		if (!division.cities.includes(city)) {
 			await waitForFunds(ns, 5e9);	// Don't move forward until you have funds to do so.
@@ -625,11 +624,11 @@ async function initCities(ns, division, productCity = "Aevum") {
 }
 
 /**
- * Stops production, lets the warehouses fill up, then sells everything at once. 
+ * Stops production, lets the warehouses fill up, then sells everything at once.
  * This bloats your profit/sec and tricks your next investment.
- * @param {NetScript} ns 
- * @param {Division} division 
- * @param {String} productCity 
+ * @param {NetScript} ns
+ * @param {Division} division
+ * @param {String} productCity
  */
  async function trickInvest(ns, division, productCity = "Aevum") {
 	ns.print("Prepare to trick investors...");
@@ -640,7 +639,7 @@ async function initCities(ns, division, productCity = "Aevum") {
 		ns.corporation.sellProduct(division.name, productCity, product, "0", ns.corporation.getProduct(division.name, product).sCost, true);
 	}
 
-	// put all employees into production to produce as fast as possible 
+	// put all employees into production to produce as fast as possible
 	for (const city of cities) {
 		const employees = ns.corporation.getOffice(division.name, city).employees.length;
 
@@ -669,7 +668,7 @@ async function initCities(ns, division, productCity = "Aevum") {
 	}
 	ns.print("Warehouses are full, start selling");
 
-	// put all employees into business to sell as much as possible 
+	// put all employees into business to sell as much as possible
 	var initialInvestFunds = ns.corporation.getInvestmentOffer().funds;
 	ns.print("Initial investment offer: " + ns.nFormat(initialInvestFunds, "$0.00a"));
 	for (const city of cities) {
@@ -685,7 +684,7 @@ async function initCities(ns, division, productCity = "Aevum") {
 	}
 
 	// wait until the stored products are sold, which should lead to huge investment offers
-	// There is a chance that this might not happen! It depends on what your profit/sec is 
+	// There is a chance that this might not happen! It depends on what your profit/sec is
 	// Typically I only see 2x bonus when doing this manually outside of BN3
 	const timeout = 60*1000;
 	var curTime = 0;
@@ -722,11 +721,11 @@ async function waitForFunds(ns, cost) {
 	var isUnique = false;
 
 	while (!isUnique) {
-		if (divisionType == "Tobacco") 
+		if (divisionType == "Tobacco")
 			name = toteNames[Math.floor(Math.random() * toteNames.length)] + " Totes";
 		else
 			name += healthNames[Math.floor(Math.random() * healthNames.length)];
-			
+
 		if (Math.random()*10 < 3)
 			name += " " + nameModifiers[Math.floor(Math.random() * nameModifiers.length)];
 
@@ -737,9 +736,9 @@ async function waitForFunds(ns, cost) {
 }
 
 /**
- * Modifies an exponential, maintaining a value between 1e0 and 
- * @param {Number} multiplier 
- * @param {Number} power 
+ * Modifies an exponential, maintaining a value between 1e0 and
+ * @param {Number} multiplier
+ * @param {Number} power
  * @param {Number} isDecimal
  * @param {Number} multiplierMod Whole integers only!
  * @returns {Number, Number} multi, pow

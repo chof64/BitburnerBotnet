@@ -1,5 +1,5 @@
 /**
- * optional/toggleShare.js - Toggles sharing behavior for scripts.
+ * optional/toggleShare.js - Toggles sharing behavior across the botnet via a port flag.
  *
  * Author: Zharay (Original Repository: https://github.com/Zharay/BitburnerBotnet)
  *
