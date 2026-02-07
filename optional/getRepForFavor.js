@@ -1,14 +1,19 @@
-/*
-usage: run repNeededForFavor.js favorTarget
-    returns how much reputation you need in total with a faction or company to reach the favor favorTarget.
-    (as of v0.37.1, the constans are the same for factions and companies)
-formula adapted from Faction.js/getFavorGain(), Company.js/getFavorGain() and Constants.js:
-    https://github.com/danielyxie/bitburner/blob/master/src/Faction.js
-    
-    also available as netscript 1.0 script (running in Firefox)
-    https://github.com/sschmidTU/BitBurnerScripts/
-    @author sschmidTU
-*/
+/**
+ * optional/getRepForFavor.js - Calculates reputation gains needed for desired favor.
+ *
+ * Author: Zharay (Original Repository: https://github.com/Zharay/BitburnerBotnet)
+ *
+ * Usage:
+ * ```
+ * run optional/getRepForFavor.js [targetFavor] [currentRep]
+ * ```
+ *
+ * Requirements:
+ * - API: ns.tprint, ns.args
+ * - RAM: TODO (suggested: 0.6 GB)
+ *
+ * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/optional/getRepForFavor.js
+ */
 
 function repNeededForFavor(targetFavor) {
     

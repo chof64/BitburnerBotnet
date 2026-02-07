@@ -1,12 +1,19 @@
-/** A more in-depth server information script
- * With provided threshold, you can obtain all the info you need on the servers you want
- * 
- * Usage: run optional/getServerStatus.js [ThresholdModifier] [Server] [Server] ...
- * Example: run optional/getServerStatus.js 0.8 n00dles harakiri-sushi
- * 
- * Written By: Zharay
- * URL: https://github.com/Zharay/BitburnerBotnet
-**/
+/**
+ * optional/getServeStatus.js - Reports server status and metrics.
+ *
+ * Author: Zharay (Original Repository: https://github.com/Zharay/BitburnerBotnet)
+ *
+ * Usage:
+ * ```
+ * run optional/getServeStatus.js [ThresholdModifier] [Server] [Server] ...
+ * ```
+ *
+ * Requirements:
+ * - API: ns.serverExists, ns.getServerMaxMoney, ns.getServerMinSecurityLevel, ns.getServerRam, ns.getServerSecurityLevel, ns.getServerMoneyAvailable, ns.nFormat, ns.getServerGrowth, ns.sleep, ns.tprint
+ * - RAM: TODO (suggested: 2.2 GB)
+ *
+ * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/optional/getServeStatus.js
+ */
 
 /** @param {NS} ns */
 export async function main(ns) {

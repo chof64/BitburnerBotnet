@@ -1,15 +1,19 @@
-/**Shuts down everything. Then restarts them again!
- * Unfortunately it's not as robust as it sounds. It uses the
- * host list provided by the coordinator to do the heavy lifting
- * for us. Then it kills each server's script before running the 
- * main scripts used by the home server (namely auto-spread-v2 which
- * will do the job of re-uploading files, running the coordinator, and
- * every hack-daemon on the network).
- * 
- * This script is also used to quickly launch optional scripts.
- * 	Written By: Zharay
- * 	URL: https://github.com/Zharay/BitburnerBotnet
-**/
+/**
+ * restart-scripts.js - Restarts or manages running scripts on a host.
+ *
+ * Author: Zharay (Original Repository: https://github.com/Zharay/BitburnerBotnet)
+ *
+ * Usage:
+ * ```
+ * run restart-scripts.js
+ * ```
+ *
+ * Requirements:
+ * - API: ns.disableLog, ns.tprint, ns.ps, ns.kill, ns.peek, ns.killall, ns.clearPort, ns.readPort, ns.sleep, ns.tryWritePort, ns.run, ns.getServerMaxRam, ns.getServerUsedRam, ns.getScriptRam
+ * - RAM: TODO (suggested: 1.0 GB)
+ *
+ * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/restart-scripts.js
+ */
 
 /** @param {NS} ns */
 export async function main(ns) {

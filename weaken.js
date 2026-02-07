@@ -1,9 +1,24 @@
-/**Weaken() script.
- * This will report via ports to the coordinator which has 0 RAM cost!
- * Requires the hack-daemon!
- * 	Written By: Zharay
- *  URL: https://github.com/Zharay/BitburnerBotnet
-**/
+/**
+ * weaken.js - Reduces server security.
+ *
+ * Author: Zharay (Original Repository: https://github.com/Zharay/BitburnerBotnet)
+ *
+ * Usage:
+ * ```
+ * run weaken.js [target] [host] [threads] [RAM] [securityRisk]
+ * ```
+ * Example:
+ * ```
+ * run weaken.js "n00dles" "home" 10 2.4 5
+ * ```
+ *
+ * Requirements:
+ * - API: ns.weaken, ns.tryWritePort, ns.print
+ * - RAM: TODO (suggested: 2.0 GB)
+ *
+ * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/weaken.js
+ */
+
 
 /** @param {NS} ns */
 export async function main(ns) {

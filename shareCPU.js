@@ -1,10 +1,19 @@
-/**Share() script.
- * It will continuously run share() which typically only lasts for 10 seconds.
- * It will only stop when the share command is no longer set (or kill command is set)
- * Can only be ran on home or private servers and requires the hack-daemon!
- * 	Written By: Zharay
- *  URL: https://github.com/Zharay/BitburnerBotnet
-**/
+/**
+ * shareCPU.js - Runs ns.share() to boost contracts and reputation.
+ *
+ * Author: Zharay (Original Repository: https://github.com/Zharay/BitburnerBotnet)
+ *
+ * Usage:
+ * ```
+ * run shareCPU.js
+ * ```
+ *
+ * Requirements:
+ * - API: ns.peek, ns.share, ns.sleep
+ * - RAM: TODO (suggested: 0.1 GB)
+ *
+ * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/shareCPU.js
+ */
 
 /** @param {NS} ns */
 export async function main(ns) {
