@@ -9,7 +9,7 @@
  * ```
  *
  * Requirements:
- * - API: ns.stock.getSymbols, ns.stock.getPrice, ns.stock.getMaxShares, ns.stock.getBidPrice, ns.stock.getAskPrice, ns.stock.short, ns.stock.buy, ns.getServerMoneyAvailable, ns.stock.getPosition, ns.formatNumber, ns.alert, ns.sleep, ns.getPortHandle
+ * - API: ns.stock.getSymbols, ns.stock.getPrice, ns.stock.getMaxShares, ns.stock.getBidPrice, ns.stock.getAskPrice, ns.stock.buyShort, ns.stock.buyStock, ns.getServerMoneyAvailable, ns.stock.getPosition, ns.formatNumber, ns.alert, ns.sleep, ns.getPortHandle
  * - RAM: TODO (suggested: 2.0 GB)
  *
  * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/stock-bot-v2.js
@@ -130,7 +130,7 @@ export async function main(ns) {
 				const cost = longShares * longPrice;
 				const profit = longShares * (bidPrice - longPrice) - 2 * commission;
 				if (state < 0) {
-					const sellPrice = ns.stock.sell(sym, longShares);
+					const sellPrice = ns.stock.sellStock(sym, longShares);
 					if (sellPrice > 0) {
 						ns.print(`WARN | SOLD (long) ${sym}. Profit: ${format(profit)}`);
 					}
@@ -141,7 +141,7 @@ export async function main(ns) {
 				const cost = shortShares * shortPrice;
 				const profit = shortShares * (shortPrice - askPrice) - 2 * commission;
 				if (state > 0) {
-					const sellPrice = ns.stock.sellShort(sym, shortShares);
+					const sellPrice = ns.stock.sellStockShort(sym, shortShares);
 					if (sellPrice > 0) {
 						ns.print(`WARN | SOLD (short) ${sym}. Profit: ${format(profit)}`);
 					}
@@ -152,12 +152,12 @@ export async function main(ns) {
 				const money = ns.getServerMoneyAvailable("home") * spendAmount;
 				if (state > 0) {
 					const sharesToBuy = Math.min(10000, ns.stock.getMaxShares(sym), Math.floor((money - commission) / askPrice));
-					if (ns.stock.buy(sym, sharesToBuy) > 0) {
+					if (ns.stock.buyStock(sym, sharesToBuy) > 0) {
 						ns.print(`INFO | BOUGHT (long) ${sym}.`);
 					}
 				} else if (state < 0 && shortAvailable) {
 					const sharesToBuy = Math.min(10000, ns.stock.getMaxShares(sym), Math.floor((money - commission) / bidPrice));
-					if (ns.stock.short(sym, sharesToBuy) > 0) {
+					if (ns.stock.buyShort(sym, sharesToBuy) > 0) {
 						ns.print(`INFO | BOUGHT (short) ${sym}.`);
 					}
 				}
@@ -186,9 +186,9 @@ export async function main(ns) {
 			const shortShares = positions[2];
 
 			if (longShares > 0) {
-				sellTotal -= ns.stock.sell(sym, longShares);
+				sellTotal -= ns.stock.sellStock(sym, longShares);
 			} else if (shortShares > 0) {
-				sellTotal = ns.stock.sellShort(sym, shortShares);
+				sellTotal = ns.stock.sellStockShort(sym, shortShares);
 			}
 
             ns.print(`Liquidated Assets for ${ns.formatNumber(sellTotal)}`);

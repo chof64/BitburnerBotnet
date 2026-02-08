@@ -9,7 +9,7 @@
  * ```
  *
  * Requirements:
- * - API: ns.stock.getSymbols, ns.stock.getPrice, ns.stock.sell, ns.stock.sellShort, ns.stock.buy, ns.stock.short, ns.stock.getPosition, ns.stock.getMaxShares, ns.stock.getVolatility, ns.stock.getForecast, ns.stock.getAskPrice, ns.stock.getBidPrice, ns.getServerMoneyAvailable, ns.nFormat, ns.getPortHandle, ns.getScriptRam, ns.sleep, ns.clearLog, ns.printf, ns.tprint
+ * - API: ns.stock.getSymbols, ns.stock.getPrice, ns.stock.sellStock, ns.stock.sellStockShort, ns.stock.buyStock, ns.stock.buyShort, ns.stock.getPosition, ns.stock.getMaxShares, ns.stock.getVolatility, ns.stock.getForecast, ns.stock.getAskPrice, ns.stock.getBidPrice, ns.getServerMoneyAvailable, ns.nFormat, ns.getPortHandle, ns.getScriptRam, ns.sleep, ns.clearLog, ns.printf, ns.tprint
  * - RAM: TODO (suggested: 4.0 GB)
  *
  * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/stock-bot.js
@@ -48,7 +48,7 @@ export async function main(ns) {
 			if (stock.longShares > 0
 				&& (percentageChange(stock.initProfitPotential, stock.profitPotential) <= expProfitLossLong
 					|| stock.profitPotential <= 0 || stock.forecast < longForecastSell)) {
-				let gained = ns.stock.sell(stock.sym, stock.longShares) * stock.longShares;
+				let gained = ns.stock.sellStock(stock.sym, stock.longShares) * stock.longShares;
 				prevTrans.push(copyStock(stock, "sale", true, stock.longShares, percentageChange(stock.initProfitPotential, stock.profitPotential), gained));
 				stock.longShares = 0;
 				corpus -= commission;
@@ -58,7 +58,7 @@ export async function main(ns) {
 			if (stock.shortShares > 0 && shortAvailable
 				&& (percentageChange(stock.initProfitPotential, stock.profitPotential) > expProfitGainShort
 					|| stock.profitPotential > 0 || stock.forecast > shortForecastSell)) {
-				let gained = ns.stock.sellShort(stock.sym, stock.shortShares) * stock.shortShares;
+				let gained = ns.stock.sellStockShort(stock.sym, stock.shortShares) * stock.shortShares;
 				prevTrans.push(copyStock(stock, "sale", false, stock.shortShares, percentageChange(stock.initProfitPotential, stock.profitPotential), gained));
 				stock.shortShares = 0;
 				corpus -= commission;
@@ -72,7 +72,7 @@ export async function main(ns) {
 				if (ns.getServerMoneyAvailable("home") < (fracL * corpus) && stock.longShares > 0 ) {
 					let cashNeeded = (corpus * fracH) - ns.getServerMoneyAvailable("home") + commission;
 					let numShares = Math.floor(cashNeeded / stock.price);
-					let gained = ns.stock.sell(stock.sym, numShares) * numShares;
+					let gained = ns.stock.sellStock(stock.sym, numShares) * numShares;
 					prevTrans.push(copyStock(stock, "cash", true, stock.longShares, percentageChange(stock.initProfitPotential, stock.profitPotential), gained));
 					stock.longShares -= numShares;
 					corpus -= commission;
@@ -89,7 +89,7 @@ export async function main(ns) {
 				let numShares = Math.min(stock.maxShares, Math.floor((cashToSpend - commission) / stock.askPrice));
 				let condition =  numShares * stock.profitPotential * stock.price * numCycles;
 				if (condition > commission * 2) {
-					let price = ns.stock.buy(stock.sym, numShares) * numShares;
+					let price = ns.stock.buyStock(stock.sym, numShares) * numShares;
 					if (price > 0) prevTrans.push(copyStock(stock, "", true, numShares, condition, price));
 				}
 			}
@@ -102,7 +102,7 @@ export async function main(ns) {
 				let numShares = Math.min(stock.maxShares, Math.floor((cashToSpend - commission) / stock.bidPrice));
 				let condition =  numShares * stock.bidPrice * numCycles;
 				if (condition > commission * 2) {
-					let price = ns.stock.short(stock.sym, numShares) * numShares;
+					let price = ns.stock.buyShort(stock.sym, numShares) * numShares;
 					if (price > 0) prevTrans.push(copyStock(stock, "", false, numShares, condition, price));
 				}
 			}
@@ -122,9 +122,9 @@ export async function main(ns) {
 
         for (const stock of stocks){
 			if (stock.longShares > 0)
-				finalSold += ns.stock.sell(stock.sym, stock.longShares) * stock.longShares;
+				finalSold += ns.stock.sellStock(stock.sym, stock.longShares) * stock.longShares;
 			else if (stock.shortShares > 0)
-				finalSold += ns.stock.sellShort(stock.sym, stock.shortShares) * stock.shortShares;
+				finalSold += ns.stock.sellStockShort(stock.sym, stock.shortShares) * stock.shortShares;
 		}
 
         ns.print(`Final Total: ${ns.formatNumber(finalSold)}`);
