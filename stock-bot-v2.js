@@ -9,7 +9,7 @@
  * ```
  *
  * Requirements:
- * - API: ns.stock.getSymbols, ns.stock.getPrice, ns.stock.getMaxShares, ns.stock.getBidPrice, ns.stock.getAskPrice, ns.stock.short, ns.stock.buy, ns.getServerMoneyAvailable, ns.stock.getPosition, ns.nFormat, ns.alert, ns.sleep, ns.getPortHandle
+ * - API: ns.stock.getSymbols, ns.stock.getPrice, ns.stock.getMaxShares, ns.stock.getBidPrice, ns.stock.getAskPrice, ns.stock.short, ns.stock.buy, ns.getServerMoneyAvailable, ns.stock.getPosition, ns.formatNumber, ns.alert, ns.sleep, ns.getPortHandle
  * - RAM: TODO (suggested: 2.0 GB)
  *
  * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/stock-bot-v2.js
@@ -167,13 +167,13 @@ export async function main(ns) {
 
 
 			if (totalEquity + ns.getServerMoneyAvailable("home") >= liquidateThresh) {
-				if (liquidateAtS4) await ns.alert(`You have a possible market value of ${ns.nFormat(totalEquity, "$0.00a")}!\nI've liquidated your stocks, but you have to purchase the APIs needed for stock-bot.js yourself!`);
-				else await ns.alert(`You have a possible market value of ${ns.nFormat(totalEquity, "$0.00a")}!\nYou may want to liquidate your stocks and purchase the APIs needed for stock-bot.js yourself!`);
+                if (liquidateAtS4) await ns.alert(`You have a possible market value of ${ns.formatNumber(totalEquity)}!\nI've liquidated your stocks, but you have to purchase the APIs needed for stock-bot.js yourself!`);
+                else await ns.alert(`You have a possible market value of ${ns.formatNumber(totalEquity)}!\nYou may want to liquidate your stocks and purchase the APIs needed for stock-bot.js yourself!`);
 				hasAlerted = true;
 			}
 		}
 
-		ns.print(`Total Equity: ${ns.nFormat(totalEquity, "$0.00a")}`);
+        ns.print(`Total Equity: ${ns.formatNumber(totalEquity)}`);
 		reportStocks(ns, myStocks);
 	}
 
@@ -191,7 +191,7 @@ export async function main(ns) {
 				sellTotal = ns.stock.sellShort(sym, shortShares);
 			}
 
-			ns.print(`Liquidated Assets for ${ns.nFormat(sellTotal, "$0.00a")}`);
+            ns.print(`Liquidated Assets for ${ns.formatNumber(sellTotal)}`);
 		}
 		reportStocks(ns, myStocks);
 	}

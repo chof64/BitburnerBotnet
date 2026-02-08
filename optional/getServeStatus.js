@@ -9,7 +9,7 @@
  * ```
  *
  * Requirements:
- * - API: ns.serverExists, ns.getServerMaxMoney, ns.getServerMinSecurityLevel, ns.getServerRam, ns.getServerSecurityLevel, ns.getServerMoneyAvailable, ns.nFormat, ns.getServerGrowth, ns.sleep, ns.tprint
+ * - API: ns.serverExists, ns.getServerMaxMoney, ns.getServerMinSecurityLevel, ns.getServerRam, ns.getServerSecurityLevel, ns.getServerMoneyAvailable, ns.formatNumber, ns.getServerGrowth, ns.sleep, ns.tprint
  * - RAM: TODO (suggested: 2.2 GB)
  *
  * File URL: https://raw.githubusercontent.com/chof64/BitburnerBotnet/main/optional/getServeStatus.js
@@ -35,7 +35,7 @@ export async function main(ns) {
 	while (true) {
 		for (var i = 1; i < ns.args.length; i++) {
 			var target = ns.args[i];
-			
+
 			ns.tprint("Target: " + target);
 
 			if (!ns.serverExists(target)) {
@@ -48,7 +48,7 @@ export async function main(ns) {
 
 			ns.tprint(`RAM: ${ns.getServerRam(target)}`);
 			ns.tprint("Security: " + ns.getServerSecurityLevel(target) + " / " + securityThreshold);
-			ns.tprint("Money: " + ns.nFormat(ns.getServerMoneyAvailable(target), "$0.00a") + " / " + ns.nFormat(moneyTreshold, "$0.00a") + " (" + ns.nFormat(ns.getServerMaxMoney(target), "$0.00a") + ")");
+            ns.tprint("Money: " + ns.formatNumber(ns.getServerMoneyAvailable(target)) + " / " + ns.formatNumber(moneyTreshold) + " (" + ns.formatNumber(ns.getServerMaxMoney(target)) + ")");
 			ns.tprint("Growth: " + ns.getServerGrowth(target));
 		}
 

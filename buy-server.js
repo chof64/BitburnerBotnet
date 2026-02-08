@@ -23,9 +23,9 @@
 /** @param {NS} ns */
 export async function main(ns) {
 	ns.disableLog("ALL");
-	
+
 	var memLevel = 4;					// 4 = 16GB
-	const maxLevel = 20; 				// True maximum is 20 (1048576GB = 1 Petabyte) 
+	const maxLevel = 20; 				// True maximum is 20 (1048576GB = 1 Petabyte)
 	const spendPercentage = 0.2; 		// Percentage of maximum money to spend on server upgrades.
 	const ramUsageThreshold = 0.8;		// Percentage of global ram used in hacks. If it goes beyond this, upgrade for more capacity.
 	const waitInterval = 1000*60*1; 	// Time to wait between cycles (in ms)
@@ -50,7 +50,7 @@ export async function main(ns) {
 	if (memLevel == 4 && pservers.length > 0)
 		memLevel =1 + Math.log2(ns.getServerMaxRam(pservers[0]));
 
-	ns.print(`Starting with Memory Level: ${memLevel} (${ns.nFormat(Math.pow(2, memLevel) * Math.pow(1000,3), "0.00b")})`);
+    ns.print(`Starting with Memory Level: ${memLevel} (${ns.formatRam(Math.pow(2, memLevel) * Math.pow(1000,3))})`);
 
 	// Clear fHostKill - Just incase something is still there
 	fHostKill.clear();
@@ -60,43 +60,43 @@ export async function main(ns) {
 		var globalRamUsage = 0;
 		var globalMaxRam = 0;
 		var globalUsedRam = 0;
-		
+
 		// Get the current ram usage. [Note: DO NOT use port 4 for this. It is VERY slow]
 		pservers.forEach(p => {
 			globalUsedRam += ns.getServerUsedRam(p);
 			globalMaxRam += ns.getServerMaxRam(p);
 		});
-		
+
 		if (globalMaxRam) globalRamUsage = globalUsedRam / globalMaxRam;
 		else globalRamUsage = 1.0;
-		
+
 		// Buy servers until we reach cap
 		if (pservers.length < 24) {
 			ns.print(" ");
 			ns.print("Not at maximum server count. Attempting to buy some...");
 
 			while ((ns.getServerMoneyAvailable("home") * spendPercentage) > ns.getPurchasedServerCost(Math.pow(2, memLevel))) {
-				ns.print(`Purchasing a [${Math.pow(2, memLevel)} GB] server... (${ns.nFormat(ns.getPurchasedServerCost(Math.pow(2, memLevel)), "$0.00a")})`);
-				
-				var hostname = ns.purchaseServer("pserv-" + Math.pow(2, memLevel), Math.pow(2, memLevel));	
+                ns.print(`Purchasing a [${Math.pow(2, memLevel)} GB] server... (${ns.formatNumber(ns.getPurchasedServerCost(Math.pow(2, memLevel)))})`);
+
+				var hostname = ns.purchaseServer("pserv-" + Math.pow(2, memLevel), Math.pow(2, memLevel));
 				if (!ns.serverExists(hostname)) {
 					ns.print(`ERROR: Failed to buy server! (Maxed out?) ${hostname}`);
 					break;
 				}
-				
+
 				ns.print("Copying files to server...");
-				await ns.scp(files, hostname); 
-				
+				await ns.scp(files, hostname);
+
 				ns.print("Running Hack-Daemon...");
 				ns.exec("hack-daemon.js", hostname, 1);
 			}
 
-			ns.print(`Warning: Not enough money. ( ${ns.nFormat(ns.getServerMoneyAvailable("home") * spendPercentage, "$0.000a")} / ${ns.nFormat(ns.getPurchasedServerCost(Math.pow(2, memLevel)), "$0.000a")} )`);
+            ns.print(`Warning: Not enough money. ( ${ns.formatNumber(ns.getServerMoneyAvailable("home") * spendPercentage)} / ${ns.formatNumber(ns.getPurchasedServerCost(Math.pow(2, memLevel)))} )`);
 
 		// Buy servers only if we are not up to our ram threshold
 		} else if (globalRamUsage >= ramUsageThreshold) {
 
-			ns.print(`Private server ram is at [${ns.nFormat(globalRamUsage, "0.00%")}]. Attempting to upgrade...`);
+            ns.print(`Private server ram is at [${ns.formatNumber(globalRamUsage)}]. Attempting to upgrade...`);
 
 			for(var i = 0; i < pservers.length; i++) {
 
@@ -109,7 +109,7 @@ export async function main(ns) {
 						var task = {"target" : "", "host" : "", "task" : "", "done" : true, "threads" : 0, "ram" : 0, "security" : 0};
 
 						ns.print(`Going to remove ${pservers[i]} (${pservers[i].split("-")[1]} GB)`);
-						
+
 						var hackdaemonProcess = processes.filter (x => x.filename == "hack-daemon.js");
 						if (hackdaemonProcess.length > 0) {
 							ns.print(`Requesting [${pservers[i]}] to kill it's hack-daemon...`);
@@ -124,7 +124,7 @@ export async function main(ns) {
 
 						ns.print("Telling coordinator we deleted [" + pservers[i] + "]")
 						await ns.tryWritePort(12, pservers[i]);
-						
+
 						ns.print("Killing for tasks...")
 						processes = ns.ps(pservers[i]);
 
@@ -141,7 +141,7 @@ export async function main(ns) {
 								if (task.host != "EXP") {
 									task.ram = parseFloat(p.args[4]);
 									task.security = parseFloat(p.args[5]) * -1;
-									
+
 									ns.print("Reporting grow.js task done to coordinator");
 									await ns.tryWritePort(13, JSON.stringify(task));
 								} else {
@@ -158,7 +158,7 @@ export async function main(ns) {
 								if (task.host != "EXP") {
 									task.ram = parseFloat(p.args[3]);
 									task.security = parseFloat(p.args[4]) * -1;
-									
+
 									ns.print(`Reporting ${p.filename} task done to coordinator`);
 									await ns.tryWritePort(13, JSON.stringify(task));
 								} else {
@@ -190,7 +190,7 @@ export async function main(ns) {
 						}
 
 						ns.print("Copying files to server...");
-						await ns.scp(files, hostname); 
+						await ns.scp(files, hostname);
 
 						ns.print("Running Hack-Daemon...");
 						ns.exec("hack-daemon.js", hostname, 1);
@@ -200,21 +200,21 @@ export async function main(ns) {
 						++upgradeCount;
 					}
 				} else if (globalRamUsage >= ramUsageThreshold) {
-					ns.print("[" + (i < 10 ? "0" : "") + i + "] Warning: Not enough money. ( " + ns.nFormat(ns.getServerMoneyAvailable("home") * spendPercentage, "$0.000a") + " / " + ns.nFormat(ns.getPurchasedServerCost(Math.pow(2, memLevel)), "$0.000a") + " )");
+                    ns.print("[" + (i < 10 ? "0" : "") + i + "] Warning: Not enough money. ( " + ns.formatNumber(ns.getServerMoneyAvailable("home") * spendPercentage) + " / " + ns.formatNumber(ns.getPurchasedServerCost(Math.pow(2, memLevel))) + " )");
 				} else {
-					ns.print(`Private server ram is sufficient (${ns.nFormat(globalRamUsage, "0.00%")}). SKIP!`);
+                    ns.print(`Private server ram is sufficient (${ns.formatNumber(globalRamUsage)}). SKIP!`);
 				}
 			}
 		} else {
-			ns.print(`Private server ram is sufficient (${ns.nFormat(globalRamUsage, "0.00%")}). SKIP!`);
+            ns.print(`Private server ram is sufficient (${ns.formatNumber(globalRamUsage)}). SKIP!`);
 		}
 
 		if (upgradeCount >= 25) {
 			memLevel++;
 			upgradeCount = 0;
-			ns.print("Increasing Memory Level: " + memLevel + " (" + Math.pow(2, memLevel) + "GB @ $" + ns.nFormat(ns.getPurchasedServerCost(Math.pow(2, memLevel)), "$0.000a") + ")");
-		} 		
-		
+            ns.print("Increasing Memory Level: " + memLevel + " (" + Math.pow(2, memLevel) + "GB @ $" + ns.formatNumber(ns.getPurchasedServerCost(Math.pow(2, memLevel))) + ")");
+		}
+
 		if (fKill.peek() != "NULL PORT DATA")
 			break;
 

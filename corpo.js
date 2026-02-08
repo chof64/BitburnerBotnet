@@ -217,17 +217,17 @@ function handleUpgrades(ns) {
 	for (const upgrade of upgradeList) {
 		// Fixed the old version of this code by adding a limiter and removed the total exclusion of ABS SalesBots and Wilson Analytics (lol)
 		if (ns.corporation.getUpgradeLevel(upgrade.name) < upgrade.max && ns.corporation.getCorporation().funds >= (upgrade.prio * ns.corporation.getUpgradeLevelCost(upgrade.name))) {
-			ns.print(`[CORP] Upgrading ${upgrade.name} to ${ns.corporation.getUpgradeLevel(upgrade.name) + 1} (${ns.nFormat(ns.corporation.getUpgradeLevelCost(upgrade.name),"$0.00a")})`);
+            ns.print(`[CORP] Upgrading ${upgrade.name} to ${ns.corporation.getUpgradeLevel(upgrade.name) + 1} (${ns.formatNumber(ns.corporation.getUpgradeLevelCost(upgrade.name))})`);
 			ns.corporation.levelUpgrade(upgrade.name);
 		}
 	}
 
 	// Only get shady accounting or Government Partnership if you have 4x the funds (ie. end game)
 	if (!ns.corporation.hasUnlockUpgrade("Shady Accounting") && ns.corporation.getUnlockUpgradeCost("Shady Accounting") * 4 < ns.corporation.getCorporation().funds) {
-		ns.print(`[CORP] Unlocking Shady Accounting (${ns.nFormat(ns.corporation.getUnlockUpgradeCost("Shady Accounting"), "$0.00a")})`)
+        ns.print(`[CORP] Unlocking Shady Accounting (${ns.formatNumber(ns.corporation.getUnlockUpgradeCost("Shady Accounting"))})`)
 		ns.corporation.unlockUpgrade("Shady Accounting");
 	} else if (!ns.corporation.hasUnlockUpgrade("Government Partnership") && ns.corporation.getUnlockUpgradeCost("Government Partnership") * 4 < ns.corporation.getCorporation().funds) {
-		ns.print(`[CORP] Unlocking Government Partnership (${ns.nFormat(ns.corporation.getUnlockUpgradeCost("Government Partnership"), "$0.00a")})`)
+        ns.print(`[CORP] Unlocking Government Partnership (${ns.formatNumber(ns.corporation.getUnlockUpgradeCost("Government Partnership"))})`)
 		ns.corporation.unlockUpgrade("Government Partnership");
 	}
 }
@@ -411,7 +411,7 @@ async function determineMaxMarketPrice(ns, division, productName) {
 		// We always go from 1 to 99 before going up a power (ie. 1e0 = 1, 99e0 = 99, 10e1 = 100, 99e1 = 990...)
 		// In my previous runs, once you go beyond 100, the granularity goes out the window.
 
-		//ns.print(`[${division.name}] ${productName}: Producing: ${ns.nFormat(product.cityData["Aevum"][1],"0.000")} | Selling: ${ns.nFormat(product.cityData["Aevum"][2],"0.000")}`);
+        //ns.print(`[${division.name}] ${productName}: Producing: ${ns.formatNumber(product.cityData["Aevum"][1])} | Selling: ${ns.formatNumber(product.cityData["Aevum"][2])}`);
 
 		newExp = modExponential(mpMultiplier, mpPower, indOpt.mpDecimal, indOpt.mpDecimal ? 2 : 1);
 		mpMultiplier = newExp.multi;
@@ -423,7 +423,7 @@ async function determineMaxMarketPrice(ns, division, productName) {
 		product = ns.corporation.getProduct(division.name, productName);
 	} while (product.cityData["Aevum"][1].toFixed(2) == product.cityData["Aevum"][2].toFixed(2))
 
-	//ns.print(`[${division.name}] ${productName}: Producing: ${ns.nFormat(product.cityData["Aevum"][1],"0.000")} | Selling: ${ns.nFormat(product.cityData["Aevum"][2],"0.000")}`);
+    //ns.print(`[${division.name}] ${productName}: Producing: ${ns.formatNumber(product.cityData["Aevum"][1])} | Selling: ${ns.formatNumber(product.cityData["Aevum"][2])}`);
 
 	// We must have found our optimal multiplier. Step back two (since it already is +1 over last good one).
 	newExp = modExponential(mpMultiplier, mpPower, indOpt.mpDecimal, indOpt.mpDecimal ? -4 : -2);
@@ -442,7 +442,7 @@ async function determineMaxMarketPrice(ns, division, productName) {
  */
 function handleAds(ns, division) {
 	if (ns.corporation.getCorporation().funds >= ns.corporation.getHireAdVertCost(division.name)) {
-		ns.print(`[${division.name}] Advertising ${division.name} (${ns.nFormat(ns.corporation.getHireAdVertCost(division.name), "$0.00a")})`);
+        ns.print(`[${division.name}] Advertising ${division.name} (${ns.formatNumber(ns.corporation.getHireAdVertCost(division.name))})`);
 		ns.corporation.hireAdVert(division.name);
 	}
 }
@@ -577,7 +577,7 @@ function handleWarehouses(ns, division) {
 		if (cityWarehouse.sizeUsed > warehouseFillUp * cityWarehouse.size) {
 			ns.print(`WARNING: [${division.name}] may have a product not selling correctly! Please check!`)
 			if (ns.corporation.getCorporation().funds >= ns.corporation.getUpgradeWarehouseCost(division.name, city)) {
-				ns.print(`[${division.name}] Upgrading warehouse in ${city} (${ns.nFormat(ns.corporation.getUpgradeWarehouseCost(division.name, city), "$0.00a")})`);
+                ns.print(`[${division.name}] Upgrading warehouse in ${city} (${ns.formatNumber(ns.corporation.getUpgradeWarehouseCost(division.name, city))})`);
 				ns.corporation.upgradeWarehouse(division.name, city);
 			}
 		}
@@ -670,7 +670,7 @@ async function initCities(ns, division, productCity = "Aevum") {
 
 	// put all employees into business to sell as much as possible
 	var initialInvestFunds = ns.corporation.getInvestmentOffer().funds;
-	ns.print("Initial investment offer: " + ns.nFormat(initialInvestFunds, "$0.00a"));
+    ns.print("Initial investment offer: " + ns.formatNumber(initialInvestFunds));
 	for (const city of cities) {
 		const employees = ns.corporation.getOffice(division.name, city).employees.length;
 		await ns.corporation.setAutoJobAssignment(division.name, city, "Operations", 0);
@@ -693,8 +693,8 @@ async function initCities(ns, division, productCity = "Aevum") {
 		curTime += 200;
 	}
 
-	ns.print(`Investment offer for 10% shares: ${ns.nFormat(ns.corporation.getInvestmentOffer().funds, "$0.00a")}`);
-	ns.toast(`Investment offer for 10% shares: ${ns.nFormat(ns.corporation.getInvestmentOffer().funds, "$0.00a")}`, "info", 5000);
+    ns.print(`Investment offer for 10% shares: ${ns.formatNumber(ns.corporation.getInvestmentOffer().funds)}`);
+    ns.toast(`Investment offer for 10% shares: ${ns.formatNumber(ns.corporation.getInvestmentOffer().funds)}`, "info", 5000);
 }
 
 /**
@@ -704,7 +704,7 @@ async function initCities(ns, division, productCity = "Aevum") {
  */
 async function waitForFunds(ns, cost) {
 	if ((ns.corporation.getCorporation().funds) < cost)
-		ns.print('Not enough money. Waiting for funds to reach: ' + ns.nFormat(ns.corporation.getCorporation().funds, "$0.00a") + ' / ' + ns.nFormat(cost, "$0.00a"));
+        ns.print('Not enough money. Waiting for funds to reach: ' + ns.formatNumber(ns.corporation.getCorporation().funds) + ' / ' + ns.formatNumber(cost));
 
 	while ((ns.corporation.getCorporation().funds) < cost)
 		await ns.sleep(1000);

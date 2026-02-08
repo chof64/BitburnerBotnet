@@ -300,20 +300,20 @@ export async function main(ns) {
 						case "hack":
 							oldTask.hackThreads = Math.max(oldTask.hackThreads + ((newTask.done ? -1 : 1) * parseInt(newTask.threads)), 0);
 							oldTask.hackRam = Math.max(oldTask.hackRam + (newTask.done ? -1 : 1) * parseFloat(newTask.ram), 0);
-						//	ns.print("[TASK] Hack Threads: " + oldTask.hackThreads + " | Ram: " + ns.nFormat(oldTask.hackRam, "0.00") + " | Security: " + ns.nFormat(oldTask.security, "0.00"));
+                        //	ns.print("[TASK] Hack Threads: " + oldTask.hackThreads + " | Ram: " + ns.formatNumber(oldTask.hackRam, 2) + " | Security: " + ns.formatNumber(oldTask.security, 2));
 						break;
 
 						case "weaken":
 							oldTask.weakenThreads = Math.max(oldTask.weakenThreads + ((newTask.done ? -1 : 1) * parseInt(newTask.threads)), 0);
 							oldTask.weakenRam = Math.max(oldTask.weakenRam + ((newTask.done ? -1 : 1) * parseFloat(newTask.ram)), 0);
-						//	ns.print("[TASK] Weaken Threads: " + oldTask.weakenThreads + " | Ram: " + ns.nFormat(oldTask.weakenRam, "0.00") + " | Security: " + ns.nFormat(oldTask.security, "0.00"));
+                        //	ns.print("[TASK] Weaken Threads: " + oldTask.weakenThreads + " | Ram: " + ns.formatNumber(oldTask.weakenRam, 2) + " | Security: " + ns.formatNumber(oldTask.security, 2));
 
 						break;
 
 						case "grow":
 							oldTask.growThreads = Math.max(oldTask.growThreads + ((newTask.done ? -1 : 1) * parseInt(newTask.threads)), 0);
 							oldTask.growRam = Math.max(oldTask.growRam + ((newTask.done ? -1 : 1) * parseFloat(newTask.ram)), 0);
-						//	ns.print("[TASK] Growth Threads: " + oldTask.growThreads + " | Ram: " + ns.nFormat(oldTask.growRam, "0.00") + " | Security: " + ns.nFormat(oldTask.security, "0.00"));
+                        //	ns.print("[TASK] Growth Threads: " + oldTask.growThreads + " | Ram: " + ns.formatNumber(oldTask.growRam, 2) + " | Security: " + ns.formatNumber(oldTask.security, 2));
 						break;
 
 						default:
@@ -349,20 +349,20 @@ export async function main(ns) {
 						case "hack":
 							oldTask.hackThreads = Math.max(oldTask.hackThreads + ((newTask.done ? -1 : 1) * parseInt(newTask.threads)), 0);
 							oldTask.hackRam = Math.max(oldTask.hackRam + (newTask.done ? -1 : 1) * parseFloat(newTask.ram), 0);
-						//	ns.print("[EXP] Hack Threads: " + oldTask.hackThreads + " | Ram: " + ns.nFormat(oldTask.hackRam, "0.00"));
+                        //	ns.print("[EXP] Hack Threads: " + oldTask.hackThreads + " | Ram: " + ns.formatNumber(oldTask.hackRam, 2));
 						break;
 
 						case "weaken":
 							oldTask.weakenThreads = Math.max(oldTask.weakenThreads + ((newTask.done ? -1 : 1) * parseInt(newTask.threads)), 0);
 							oldTask.weakenRam = Math.max(oldTask.weakenRam + ((newTask.done ? -1 : 1) * parseFloat(newTask.ram)), 0);
-						//	ns.print("[EXP] Weaken Threads: " + oldTask.weakenThreads + " | Ram: " + ns.nFormat(oldTask.weakenRam, "0.00"));
+                        //	ns.print("[EXP] Weaken Threads: " + oldTask.weakenThreads + " | Ram: " + ns.formatNumber(oldTask.weakenRam, 2));
 
 						break;
 
 						case "grow":
 							oldTask.growThreads = Math.max(oldTask.growThreads + ((newTask.done ? -1 : 1) * parseInt(newTask.threads)), 0);
 							oldTask.growRam = Math.max(oldTask.growRam + ((newTask.done ? -1 : 1) * parseFloat(newTask.ram)), 0);
-						//	ns.print("[EXP] Growth Threads: " + oldTask.growThreads + " | Ram: " + ns.nFormat(oldTask.growRam, "0.00"));
+                        //	ns.print("[EXP] Growth Threads: " + oldTask.growThreads + " | Ram: " + ns.formatNumber(oldTask.growRam, 2));
 						break;
 
 						default:

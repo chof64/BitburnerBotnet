@@ -43,7 +43,7 @@ export async function main(ns) {
 		let baseNode = ns.hacknet.getNodeStats(0);
 		let curProd = baseNode.production * ns.hacknet.numNodes();
 
-		ns.print("Current Production: " + ns.nFormat(curProd, "$0.000").toUpperCase());
+        ns.print("Current Production: " + ns.formatNumber(curProd).toUpperCase());
 		if (curProd > maxIncome)
 			break;
 
@@ -229,8 +229,8 @@ function bestNodeUpgrade(ns, index) {
 
 /** @param {NS} ns **/
 async function waitForCash(ns, cost, spendPercentage) {
-	if ((ns.getServerMoneyAvailable("home") * spendPercentage) < cost)
-		ns.print('Not enough money. Waiting for funds to reach: ' + ns.nFormat((ns.getServerMoneyAvailable("home") * spendPercentage), "$0.00a") + ' / ' + ns.nFormat(cost, "$0.00a"));
+    if ((ns.getServerMoneyAvailable("home") * spendPercentage) < cost)
+        ns.print('Not enough money. Waiting for funds to reach: ' + ns.formatNumber((ns.getServerMoneyAvailable("home") * spendPercentage)) + ' / ' + ns.formatNumber(cost));
 
 	var fKill = ns.getPortHandle(17);
 	while ((ns.getServerMoneyAvailable("home") * spendPercentage) < cost && fKill.peek() == "NULL PORT DATA")

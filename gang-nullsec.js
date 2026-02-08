@@ -118,7 +118,7 @@ function handleTasks(ns, grunts) {
 
                 // We only accept this task if it is within our limits (we have enough negative wanted gain and we won't be going over our max wanted gain by choosing it)
                 if (grunt[task.name].wantedGain + curWantedGain <= -lowestWantedGain && (lowestWantedGain - grunt[lowestWantedName].wantedGain) + grunt[task.name].wantedGain <= maxWantedGain) {
-                    //ns.print(`[${grunt.name}] ${task.name}\t\t${ns.nFormat(grunt[task.name].wantedGain, "0.000")} + ${ns.nFormat(curWantedGain, "0.000")} (${ns.nFormat(grunt[task.name].wantedGain + curWantedGain, "0.000")}) <= ${ns.nFormat(lowestWantedGain, "0.000")} && ${ns.nFormat(lowestWantedGain, "0.000")} - ${ns.nFormat(grunt[lowestWantedName].wantedGain, "0.000")} + ${ns.nFormat(grunt[task.name].wantedGain, "0.000")} (${ns.nFormat(lowestWantedGain - grunt[lowestWantedName].wantedGain + grunt[task.name].wantedGain, "0.000")}) <= ${maxWantedGain}`);
+                    //ns.print(`[${grunt.name}] ${task.name}\t\t${ns.formatNumber(grunt[task.name].wantedGain)} + ${ns.formatNumber(curWantedGain)} (${ns.formatNumber(grunt[task.name].wantedGain + curWantedGain)}) <= ${ns.formatNumber(lowestWantedGain)} && ${ns.formatNumber(lowestWantedGain)} - ${ns.formatNumber(grunt[lowestWantedName].wantedGain)} + ${ns.formatNumber(grunt[task.name].wantedGain)} (${ns.formatNumber(lowestWantedGain - grunt[lowestWantedName].wantedGain + grunt[task.name].wantedGain)}) <= ${maxWantedGain}`);
                     if (grunt.task != task.name && ns.gang.setMemberTask(grunt.name, task.name)) {
                         ns.print(`[${grunt.name}] assigned to ${task.name}!`);
                         curWantedGain += grunt[task.name].wantedGain;
@@ -162,10 +162,10 @@ function handleAscension(ns, grunts) {
         //ns.print(`[${grunt.name}] ${ascensionResult.hack}`);
         if (ascensionResult && ascensionResult.hack >= ascensionMultiThresh && ascensionResult.respect <= ns.gang.getGangInformation().respect) {
             let result = ns.gang.ascendMember(grunt.name);
-            if (result) {
-                ns.print(`[${grunt.name}] has been ascended! (hack: ${ns.nFormat(grunt.hack_asc_mult, "0.000a")} -> ${ns.nFormat(result.hack * grunt.hack_asc_mult, "0.000a")})`);
-                grunt.oldHack = grunt.hack * trainToMod;
-            }
+                if (result) {
+                    ns.print(`[${grunt.name}] has been ascended! (hack: ${ns.formatNumber(grunt.hack_asc_mult)} -> ${ns.formatNumber(result.hack * grunt.hack_asc_mult)})`);
+                    grunt.oldHack = grunt.hack * trainToMod;
+                }
         }
     }
 }
@@ -189,9 +189,9 @@ function handleEquips(ns, grunts) {
     for(const grunt of grunts) {
         for (const equip of equipsInfo) {
             let allowance = ns.getServerMoneyAvailable("home") * spendAmount;
-            if (allowance >= equip.cost && !grunt.upgrades.includes(equip.name) && !grunt.augmentations.includes(equip.name)) {
+                if (allowance >= equip.cost && !grunt.upgrades.includes(equip.name) && !grunt.augmentations.includes(equip.name)) {
                 ns.gang.purchaseEquipment(grunt.name, equip.name);
-                ns.print(`[${grunt.name}] Purchased ${equip.name} for ${ns.nFormat(equip.cost, "$0.000a")}`);
+                ns.print(`[${grunt.name}] Purchased ${equip.name} for ${ns.formatNumber(equip.cost)}`);
             }
         }
     }
